@@ -6,6 +6,12 @@
       "Fracture": {
         "$path": "src"
       },
+      "Plugin": {
+        "$path": "plugin",
+        "Fracture": {
+          "$path": "src"
+        }
+      },
       "src": {
         "$path": "tests/features"
       }
