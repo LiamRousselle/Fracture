@@ -33,6 +33,7 @@ local Fracture = {}
 Fracture.__index = Fracture
 
 local self = setmetatable({
+    Version = require(script.Parent.Version);
     _clientDir = nil :: Folder?;
     _serverDir = nil :: Folder?;
     _commonDir = nil :: Folder?;
