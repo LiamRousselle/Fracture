@@ -29,13 +29,13 @@
 
 ]=]--
 
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ServerScriptService = game:GetService("ServerScriptService")
+local Flags = {}
 
-local Fracture = require(ReplicatedStorage.Fracture)
+-- Deletes the source directory after sorting every file
+Flags.F_DeleteSourceDirectory = true
 
-Fracture:AssignClientDirectory(ReplicatedStorage.client)
-Fracture:AssignCommonDirectory(ReplicatedStorage.shared)
-Fracture:AssignServerDirectory(ServerScriptService.server)
 
-Fracture:Implement(ReplicatedStorage.src)
+do
+    export type FractureFlags = typeof(Flags)
+    return Flags
+end

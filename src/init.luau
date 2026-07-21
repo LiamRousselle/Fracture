@@ -29,6 +29,4 @@
 
 ]=]--
 
-local Flags = {}
-
-return require(script.Fracture)(Flags)
+return require(script.Fracture)

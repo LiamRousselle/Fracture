@@ -29,100 +29,56 @@
 
 ]=]--
 
--- Services
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ServerScriptService = game:GetService("ServerScriptService")
+local Fracture = {}
+Fracture.__index = Fracture
 
--- Enums
-local k_ModuleNetworkType = {
-    k_Client = 0 :: ModuleNetworkType;
-    k_Server = 1 :: ModuleNetworkType;
-    k_Shared = 2 :: ModuleNetworkType;
-}
-type ModuleNetworkType = number
+local self = setmetatable({
+    _clientDir = nil :: Folder?;
+    _serverDir = nil :: Folder?;
+    _commonDir = nil :: Folder?;
+}, Fracture)
 
--- Types
-type FamilyTree = {Instance}
+local Flags = require(script.Parent.Flags)
+local Implementation = require(script.Parent.Implementation)
 
-local function mkDir(name: string, parent: Instance) :Folder
-    local existing = parent:FindFirstChild(name)
-    if existing and existing:IsA("Folder") then
-        return existing
-    end
 
-    local dir = Instance.new("Folder")
-    dir.Name = name
-    dir.Parent = parent
-    return dir
+function Fracture:AssignClientDirectory(directory: Folder)
+    assert(directory, `Attempt to assign directroy but nil was passed`)
+    assert(typeof(directory) == "Instance", `Incorrect type passed. Expected "Instance"`)
+    self._clientDir = directory
 end
 
-local function flipTable<T>(t: T) :T
-    local copy = {} :: T|any
-    for i: number = #t :: any, 1, -1 do
-        table.insert(copy :: any, (t :: any)[i])
-    end
-    return copy
+function Fracture:AssignServerDirectory(directory: Folder)
+    assert(directory, `Attempt to assign directroy but nil was passed`)
+    assert(typeof(directory) == "Instance", `Incorrect type passed. Expected "Instance"`)
+    self._serverDir = directory
 end
 
-return function(flags: any)
-    local workDir = ReplicatedStorage.src
-
-    local clientDir = mkDir("client", ReplicatedStorage)
-    local serverDir = mkDir("server", ServerScriptService)
-    local sharedDir = mkDir("shared", ReplicatedStorage)
-
-    -- Creates a family tree (array) of ancestors of the instance given.
-    -- Array starts with the parent of the instance, and ends at the last ancestor before reaching the working directory.
-    -- Assumes that the instance is parented to another directory, not another module.
-    local function backtrack(instance: Instance): FamilyTree
-        local familyTree = {} :: {Instance}
-        local iteration = instance.Parent
-        while iteration and iteration ~= workDir do
-            table.insert(familyTree, iteration)
-            if iteration.Parent then
-                iteration = iteration.Parent
-            else
-                break
-            end
-        end
-        return familyTree
-    end
-
-    -- Rebuilds the ancestor folder chain of the instance under the given owner,
-    -- reusing folders that already exist, and returns the deepest (leaf) folder.
-    local function mimicDirectory(familyTree: FamilyTree, owner: Instance): Instance
-        local hierarchy = flipTable(familyTree)
-        local parent: Instance = owner
-        for _, child: Instance in hierarchy do
-            parent = mkDir(child.Name, parent)
-        end
-        return parent
-    end
-
-    local function cycle(root: Instance)
-        for _, instance: Instance in root:GetChildren() do
-            if instance:IsA("ModuleScript") then
-                local suffix = string.lower(string.sub(instance.Name, #instance.Name - 5, #instance.Name))
-                local type = 
-                    suffix == "client" and k_ModuleNetworkType.k_Client or
-                    suffix == "server" and k_ModuleNetworkType.k_Server or
-                    k_ModuleNetworkType.k_Shared
-
-                -- Backtrack and find where the module script is located.
-                -- Then mimic the path of the module into the new spot and move it there.
-                if type == k_ModuleNetworkType.k_Client then
-                    instance:Clone().Parent = mimicDirectory(backtrack(instance), clientDir)
-                elseif type == k_ModuleNetworkType.k_Server then
-                    instance:Clone().Parent = mimicDirectory(backtrack(instance), serverDir)
-                elseif type == k_ModuleNetworkType.k_Shared then
-                    instance:Clone().Parent = mimicDirectory(backtrack(instance), sharedDir)
-                end
-            elseif instance:IsA("Folder") then
-                cycle(instance)
-            end
-        end
-    end
-    cycle(workDir)
-
-    return {}
+function Fracture:AssignCommonDirectory(directory: Folder)
+    assert(directory, `Attempt to assign directroy but nil was passed`)
+    assert(typeof(directory) == "Instance", `Incorrect type passed. Expected "Instance"`)
+    self._commonDir = directory
 end
+
+--[=[
+    Starts organizing where each feature should be located.
+    Will throw exception if any Directories were not set.
+]=]--
+function Fracture:Implement(workingDir: Folder)
+    assert(typeof(workingDir) == "Instance", `Incorrect type passed. Expected "Instance"`)
+    assert(typeof(self._clientDir) == "Instance", `Incorrect type passed. Expected "Instance"`)
+    assert(typeof(self._serverDir) == "Instance", `Incorrect type passed. Expected "Instance"`)
+    assert(typeof(self._commonDir) == "Instance", `Incorrect type passed. Expected "Instance"`)
+    Implementation:Implement(
+        workingDir, 
+        self._clientDir :: Folder, 
+        self._serverDir :: Folder, 
+        self._commonDir :: Folder
+    )
+
+    if Flags.F_DeleteSourceDirectory then
+        workingDir:Destroy()
+    end
+end
+
+return self
