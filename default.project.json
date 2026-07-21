@@ -1,0 +1,11 @@
+{
+  "name": "Fracture",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "Fracture": {
+        "$path": "src"
+      }
+    }
+  }
+}
