@@ -2,11 +2,12 @@
 --!optimize 2
 --!nolint
 
+
 --[=[
 
     MIT License
 
-    Copyright (c) 2026 Liam
+    Copyright (c) 2026 Liam Rousselle
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -28,4 +29,6 @@
 
 ]=]--
 
-return "Init File"
+local Flags = {}
+
+return require(script.Fracture)(Flags)
