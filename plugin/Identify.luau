@@ -29,29 +29,6 @@
 
 ]=]--
 
-local SolutionDir = script:FindFirstAncestor("Fracture-Plugin")
-local Packages = SolutionDir.Packages
-
-local App = require(script.App)
-local Types = require(script.Types)
-local Fracture = require(Packages.Fracture)
-
-if plugin then
-
-    local toolbar = plugin:CreateToolbar("Fracture")
-    local button = toolbar:CreateButton("Fracture", string.format("V%s", Fracture.Version), "rbxassetid://15081504003")
-    button.ClickableWhenViewportHidden = true
-
-    local common = {
-        Plugin = plugin;
-        Button = button;
-    } :: Types.PluginCommon
-
-    local appGroup = App(common)
-
-    button.Click:Connect(function()
-        button:SetActive(not appGroup.Widget.Enabled)
-        appGroup.Widget.Enabled = not appGroup.Widget.Enabled
-    end)
-
+return function(concat: string) :string
+    return string.format("fracture.plugin/%s", concat)
 end

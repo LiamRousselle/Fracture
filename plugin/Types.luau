@@ -29,3 +29,11 @@
 
 ]=]--
 
+local task = nil
+
+export type PluginCommon = {
+    Plugin: Plugin;
+    Button: PluginToolbarButton;
+}
+
+return nil

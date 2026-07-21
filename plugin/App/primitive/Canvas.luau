@@ -3,6 +3,7 @@
 --!nolint
 
 
+
 --[=[
 
     MIT License
@@ -30,28 +31,24 @@
 ]=]--
 
 local SolutionDir = script:FindFirstAncestor("Fracture-Plugin")
-local Packages = SolutionDir.Packages
 
-local App = require(script.App)
-local Types = require(script.Types)
-local Fracture = require(Packages.Fracture)
+-- Modules
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Fusion = require(SolutionDir.Packages.Fusion)
 
-if plugin then
+-- Fusion
+local scope = Fusion.scoped {
+    New = Fusion.New;
+}
+local children = Fusion.Children
 
-    local toolbar = plugin:CreateToolbar("Fracture")
-    local button = toolbar:CreateButton("Fracture", string.format("V%s", Fracture.Version), "rbxassetid://15081504003")
-    button.ClickableWhenViewportHidden = true
-
-    local common = {
-        Plugin = plugin;
-        Button = button;
-    } :: Types.PluginCommon
-
-    local appGroup = App(common)
-
-    button.Click:Connect(function()
-        button:SetActive(not appGroup.Widget.Enabled)
-        appGroup.Widget.Enabled = not appGroup.Widget.Enabled
-    end)
-
+return function(child: any)
+    return scope:New "Frame" {
+        Name = "Canvas";
+        AnchorPoint = Vector2.one * 0.5;
+        BackgroundTransparency = 1;
+        Size = UDim2.fromScale(1, 1);
+        Position = UDim2.fromScale(0.5, 0.5);
+        [children] = child
+    }
 end
