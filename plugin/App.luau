@@ -29,8 +29,3 @@
 
 ]=]--
 
-if plugin then
-
-    
-
-end

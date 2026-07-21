@@ -6,10 +6,16 @@
       "Fracture": {
         "$path": "src"
       },
-      "Plugin": {
-        "$path": "plugin",
-        "Fracture": {
-          "$path": "src"
+      "Fracture-Plugin": {
+        "$className": "Folder",
+        "Plugin": {
+          "$path": "plugin"
+        },
+        "Packages": {
+          "$path": "Packages",
+          "Fracture": {
+            "$path": "src"
+          }
         }
       },
       "src": {
