@@ -5,6 +5,14 @@
     "ReplicatedStorage": {
       "Fracture": {
         "$path": "src"
+      },
+      "src": {
+        "$path": "tests/features"
+      }
+    },
+    "ServerScriptService": {
+      "FractureTest": {
+        "$path": "tests/FractureTest.server.luau"
       }
     }
   }
